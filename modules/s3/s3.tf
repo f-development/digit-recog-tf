@@ -37,10 +37,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "my" {
 
 resource "aws_s3_bucket_public_access_block" "my" {
   bucket                  = aws_s3_bucket.my.id
-  block_public_acls       = true
+  block_public_acls       = var.enable_acl ? false : true
+  ignore_public_acls      = var.enable_acl ? false : true
   block_public_policy     = true
-  ignore_public_acls      = true
   restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_ownership_controls" "my" {
+  bucket = aws_s3_bucket.my.id
+
+  rule {
+    object_ownership = var.enable_acl ? "BucketOwnerPreferred" : "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "my" {

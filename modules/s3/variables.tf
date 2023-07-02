@@ -17,3 +17,7 @@ variable "use_replication" {
 variable "replication_arns" {
   default = []
 }
+
+variable "enable_acl" {
+  default = false
+}
