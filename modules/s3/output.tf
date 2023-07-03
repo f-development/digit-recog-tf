@@ -1,4 +1,4 @@
-output "s3_arn" {
+output "arn" {
   value = aws_s3_bucket.my.arn
 }
 
