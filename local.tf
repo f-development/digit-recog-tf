@@ -1,5 +1,5 @@
 locals {
-  prefix = "f-dev-digit-recog"
+  prefix = "f-development-digit-recog"
 
   # vpc link support zones
   # https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vpc-links.html

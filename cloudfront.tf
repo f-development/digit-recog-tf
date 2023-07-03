@@ -1,5 +1,5 @@
 locals {
-  static_bucket_origin_id = local.static_bucket_origin_id
+  static_bucket_origin_id = "static-bucket"
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
