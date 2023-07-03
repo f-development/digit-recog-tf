@@ -81,19 +81,19 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
   }
 }
 
-data "aws_iam_policy_document" "origin_access" {
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${module.s3__static.arn}/*"]
-
-    principals {
-      type        = "AWS"
-      identifiers = [aws_cloudfront_origin_access_identity.this.iam_arn]
-    }
-  }
-}
-
-resource "aws_s3_bucket_policy" "example" {
+resource "aws_s3_bucket_policy" "origin_access" {
   bucket = module.s3__static.id
-  policy = data.aws_iam_policy_document.origin_access.json
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = {
+          AWS = aws_cloudfront_origin_access_identity.this.iam_arn
+        }
+        Action    = "s3:GetObject"
+        Resource  = "${module.s3__static.arn}/*"
+      }
+    ]
+  })
 }
