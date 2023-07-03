@@ -50,7 +50,7 @@ resource "aws_cloudfront_distribution" "this" {
   depends_on = [ aws_cloudfront_cache_policy.cache_forever ]
 }
 
-resource "aws_cloudfront_cache_policy" "cache_forever" {
+resource "aws_cloudfront_cache_policy" "cache_forever_2" {
   name        = "${local.prefix}-default"
   default_ttl = 2147483647
   max_ttl     = 2147483647
