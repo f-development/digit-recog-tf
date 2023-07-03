@@ -46,6 +46,8 @@ resource "aws_cloudfront_distribution" "this" {
       restriction_type = "none"
     }
   }
+
+  depends_on = [ aws_cloudfront_cache_policy.cache_forever ]
 }
 
 resource "aws_cloudfront_cache_policy" "cache_forever" {
