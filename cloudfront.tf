@@ -66,7 +66,7 @@ resource "aws_cloudfront_cache_policy" "cache_forever" {
       header_behavior = "none"
     }
     query_strings_config {
-      query_string_behavior = "all"
+      query_string_behavior = "none"
     }
   }
 }
