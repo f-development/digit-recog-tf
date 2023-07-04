@@ -2,8 +2,13 @@ locals {
   static_bucket_origin_id = "static-bucket"
 }
 
-resource "aws_cloudfront_origin_access_identity" "this" {
+resource "aws_cloudfront_origin_access_control" "static" {
+  name                              = "static-bucket"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
+
 
 resource "aws_cloudfront_distribution" "this" {
   enabled             = true
@@ -11,11 +16,9 @@ resource "aws_cloudfront_distribution" "this" {
   default_root_object = "index.html"
 
   origin {
-    domain_name = module.s3__static.bucket_regional_domain_name
-    origin_id   = local.static_bucket_origin_id
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path
-    }
+    domain_name              = module.s3__static.bucket_regional_domain_name
+    origin_id                = local.static_bucket_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.static.id
   }
 
   logging_config {
@@ -47,7 +50,7 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  depends_on = [ aws_cloudfront_cache_policy.cache_forever ]
+  depends_on = [aws_cloudfront_cache_policy.cache_forever]
 }
 
 resource "aws_cloudfront_cache_policy" "cache_forever" {
@@ -81,19 +84,22 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
   }
 }
 
-resource "aws_s3_bucket_policy" "origin_access" {
+resource "aws_s3_bucket_policy" "origin_access_control" {
   bucket = module.s3__static.id
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect    = "Allow"
-        Principal = {
-          AWS = aws_cloudfront_origin_access_identity.this.iam_arn
+    "Version" : "2012-10-17",
+    "Statement" : {
+      "Effect" : "Allow",
+      "Principal" : {
+        "Service" : "cloudfront.amazonaws.com"
+      },
+      "Action" : "s3:GetObject",
+      "Resource" : "${module.s3__static.arn}/*",
+      "Condition" : {
+        "StringEquals" : {
+          "AWS:SourceArn" : aws_cloudfront_distribution.this.arn
         }
-        Action    = "s3:GetObject"
-        Resource  = "${module.s3__static.arn}/*"
       }
-    ]
+    }
   })
 }
