@@ -8,17 +8,3 @@ provider "aws" {
     tags = local.tags
   }
 }
-
-# us-east1 is one of the biggest regions
-# https://cloud.google.com/compute/docs/regions-zones
-provider "google" {
-  region                      = "us-east1"
-  project                     = "f-development"
-  impersonate_service_account = var.impersonate_sa
-}
-
-provider "google-beta" {
-  region                      = "us-east1"
-  project                     = "f-development"
-  impersonate_service_account = var.impersonate_sa
-}
