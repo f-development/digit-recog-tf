@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_cloudfront_origin_access_control" "static" {
-  name                              = "static-bucket"
+  name                              = "${local.prefix}-static-bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
